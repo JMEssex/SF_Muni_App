@@ -4,13 +4,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+import * as mapboxgl from 'mapbox-gl';
+
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
+  // * NOTE: Useing the reference of `mapboxgl` saves 670K from being loading into the component.
+  // * NOTE: FIX: This is a Fix to `mapboxgl` because when importing the @types `mapboxgl.accessToken` becomes `read-only`
+  mapboxRef: typeof mapboxgl;
+
   constructor(
     private http: HttpClient,
-  ) { }
+  ) {
+    this.mapboxRef = mapboxgl;
+    this.mapboxRef.accessToken = environment.mapbox.accessToken;
+  }
 
   getBusFeed(): Observable<any> {
     return this.http.get('http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni');
