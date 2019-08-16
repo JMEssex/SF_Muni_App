@@ -1,3 +1,4 @@
+import { DbService } from './../services/db.service';
 import { MapService } from './../services/map.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -14,6 +15,7 @@ export class MapPage implements OnInit {
 
   constructor(
     private mapService: MapService,
+    protected dbService: DbService,
   ) { }
 
   ngOnInit() {
@@ -36,7 +38,7 @@ export class MapPage implements OnInit {
    */
   requestBusFeed() {
     this.mapService.getBusFeed().subscribe(
-      (response: IMap) => console.log(response),
+      (response: IMap) => this.dbService.setBusList(response),
       error => console.log(error)
     );
   }
