@@ -19,9 +19,9 @@ interface IError {
   shouldRetry: string;
 }
 
-export interface IMap {
-  vechicle: IVehicle[];
+export interface IBusMap {
+  vehicle: IVehicle[];
   lastTime: ILastTime;
   copyright: string;
-  Error: IError; // The key of `Error` has an Uppercase `E`
+  Error: IError; // NOTE: The key of `Error` has an Uppercase `E`
 }

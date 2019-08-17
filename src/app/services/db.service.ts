@@ -1,21 +1,25 @@
 /** Imported Angular Modules */
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 /** Imported App Interfaces */
-import { IMap } from '../interfaces/map.interface';
+import { IBusMap } from '../interfaces/map.interface';
 
 @Injectable({providedIn: 'root'})
 export class DbService {
+  /**
+   * Public property for setting raw `NextBus API` response data.
+   */
+  public busses: IBusMap;
 
-  busses: IMap;
+  constructor() { }
 
-  constructor(
-    private http: HttpClient,
-  ) { }
-
-  setBusList(data: IMap) {
+  /**
+   * Takes the raw `NextBus API` response data and sets it to the public `busses` property consumption.
+   *
+   * @param {IBusMap} data
+   * @memberof DbService
+   */
+  public setBusList(data: IBusMap) {
     this.busses = data;
     console.log('this.busses:', this.busses);
   }
