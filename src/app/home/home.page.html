@@ -1,14 +1,29 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <div class="ion-padding">
-    The world is your oyster.
-    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
-  </div>
+<ion-content style="--background: black">
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-list *ngIf="filteredBusList">
+      <ng-container *ngFor="let route of filteredBusList; index as index">
+        <ng-container *ngIf="index < 4">
+          <ion-button expand="block" fill="solid" color="light" size="large" (click)="addRoutePill(route)"><ion-icon name="bus"></ion-icon>&nbsp;&nbsp;Route:
+            {{route.tag}}</ion-button>
+        </ng-container>
+      </ng-container>
+    </ion-list>
+    <ion-list-header>Route Filter</ion-list-header>
+    <ion-searchbar #searchBar animated showCancelButton="focus" placeholder="Filter Routes"></ion-searchbar>
+
+
+    <p>
+      <ng-container *ngFor="let pill of routePills">
+        <ion-chip outline color="primary">
+          <ion-icon name="bus"></ion-icon>
+          <ion-label>Route: {{pill}}</ion-label>
+          <ion-icon name="close-circle" (click)="removeRoutePill(pill)"></ion-icon>
+        </ion-chip>
+      </ng-container>
+    </p>
+
+  </ion-toolbar>
+</ion-footer>
