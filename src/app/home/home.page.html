@@ -1,19 +1,20 @@
-<ion-content style="--background: black">
+<ion-content fullscreen>
+  <div id="map" class="full-view-height"></div>
 </ion-content>
-
 <ion-footer>
   <ion-toolbar>
     <ion-list *ngIf="filteredBusList">
       <ng-container *ngFor="let route of filteredBusList; index as index">
         <ng-container *ngIf="index < 4">
-          <ion-button expand="block" fill="solid" color="light" size="large" (click)="addRoutePill(route)"><ion-icon name="bus"></ion-icon>&nbsp;&nbsp;Route:
-            {{route.tag}}</ion-button>
+          <ion-button expand="block" fill="solid" color="light" size="large" (click)="addRoutePill(route)">
+            <ion-icon name="bus"></ion-icon>&nbsp;&nbsp;Route:
+            {{route.tag}}
+          </ion-button>
         </ng-container>
       </ng-container>
     </ion-list>
     <ion-list-header>Route Filter</ion-list-header>
     <ion-searchbar #searchBar animated showCancelButton="focus" placeholder="Filter Routes"></ion-searchbar>
-
 
     <p>
       <ng-container *ngFor="let pill of routePills">

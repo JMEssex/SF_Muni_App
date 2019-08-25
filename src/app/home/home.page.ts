@@ -2,6 +2,7 @@ import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { IonSearchbar } from '@ionic/angular';
 
 import { routeList } from '../../data/route-list';
+import { MapEngineService } from '../services/map-engine.service';
 
 
 @Component({
@@ -9,18 +10,18 @@ import { routeList } from '../../data/route-list';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements AfterViewInit{
-  @ViewChild('searchBar', {static: true}) searchBar: IonSearchbar;
+export class HomePage implements AfterViewInit {
+  @ViewChild('searchBar', { static: true }) searchBar: IonSearchbar;
   routes = routeList;
   filteredBusList;
-  routePills: string[] = [];
-  constructor() {
+  routePills: string[] = ['1', '6', 'N'];
+  constructor(private mapEngine: MapEngineService) {
   }
-
-
 
   ngAfterViewInit() {
     this.searchBarInit();
+    this.mapEngine.engine();
+    this.mapEngine.refreshEngine(this.routePills);
   }
 
   searchBarInit() {
@@ -36,13 +37,13 @@ export class HomePage implements AfterViewInit{
   addRoutePill(route) {
     if (this.routePills.length < 3 && this.routePills.indexOf(route.tag) === -1) {
       this.routePills.push(route.tag);
+      this.mapEngine.layerEngine(route.tag);
     }
   }
 
-  removeRoutePill(pill: string) {
-    this.routePills.splice(this.routePills.indexOf(pill), 1);
+  removeRoutePill(routeTag: string) {
+    this.routePills.splice(this.routePills.indexOf(routeTag), 1);
+    this.mapEngine.removeSource(routeTag);
   }
-
-
 
 }

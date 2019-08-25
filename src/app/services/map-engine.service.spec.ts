@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DbService } from './db.service';
+import { MapEngineService } from './map-engine.service';
 
-describe('DbService', () => {
+describe('MapEngineService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: DbService = TestBed.get(DbService);
+    const service: MapEngineService = TestBed.get(MapEngineService);
     expect(service).toBeTruthy();
   });
 });

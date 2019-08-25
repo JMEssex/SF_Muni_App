@@ -13,8 +13,8 @@ import * as mapboxgl from 'mapbox-gl';
 export class MapService {
   // * NOTE: Useing the reference of `mapboxgl` saves 670K from being loading into the component.
   // * NOTE: FIX: This is a Fix to `mapboxgl` because when importing the @types `mapboxgl.accessToken` becomes `read-only`
-  mapboxRef: typeof mapboxgl;
-
+  public mapboxRef: typeof mapboxgl;
+  public source: mapboxgl.AnySourceImpl;
   constructor(
     private http: HttpClient,
   ) {
@@ -22,7 +22,17 @@ export class MapService {
     this.mapboxRef.accessToken = environment.mapbox.accessToken;
   }
 
-  getBusFeed(): Observable<any> {
-    return this.http.get('http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni');
+  /**
+   * Calls the `NextBus API` and returns the public JSON feed for all vechicle locations in `sf-muni`.
+   *
+   * @returns {Observable<any>}
+   * @memberof DbService
+   */
+  getBusFeed(routeTag?: string): Observable<any> {
+    if (routeTag) {
+      return this.http.get(`http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&r=${routeTag}`);
+    } else {
+      return this.http.get('http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni');
+    }
   }
 }
