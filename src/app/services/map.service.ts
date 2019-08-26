@@ -14,7 +14,7 @@ export class MapService {
   // * NOTE: Useing the reference of `mapboxgl` saves 670K from being loading into the component.
   // * NOTE: FIX: This is a Fix to `mapboxgl` because when importing the @types `mapboxgl.accessToken` becomes `read-only`
   public mapboxRef: typeof mapboxgl;
-  public source: mapboxgl.AnySourceImpl;
+
   constructor(
     private http: HttpClient,
   ) {

@@ -15,8 +15,10 @@ export class HomePage implements AfterViewInit {
   routes = routeList;
   filteredBusList;
   routePills: string[] = ['1', '6', 'N'];
-  constructor(private mapEngine: MapEngineService) {
-  }
+
+  constructor(
+    private mapEngine: MapEngineService
+  ) { }
 
   ngAfterViewInit() {
     this.searchBarInit();
@@ -45,5 +47,4 @@ export class HomePage implements AfterViewInit {
     this.routePills.splice(this.routePills.indexOf(routeTag), 1);
     this.mapEngine.removeSource(routeTag);
   }
-
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { timer } from 'rxjs';
 
+import { GeoJson, FeatureCollection } from '../builders/geo-json.builder';
 import { MapService } from './map.service';
 import { IBusMap } from '../interfaces/map.interface';
-import { GeoJson, FeatureCollection } from '../builders/geo-json.builder';
-import { timer } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class MapEngineService {
   mapRef: mapboxgl.Map = null;
+
   constructor(
     private mapService: MapService
   ) { }
@@ -29,6 +29,9 @@ export class MapEngineService {
       this.mapRef.on('dataloading', () => {
         this.mapRef.resize();
       });
+
+      // Renders the map's navigation controls on the map's UI view.
+      this.mapRef.addControl(new this.mapService.mapboxRef.NavigationControl());
     }
   }
 
@@ -37,7 +40,6 @@ export class MapEngineService {
       this.createSource(selectedRouteTag);
       this.createLayer(selectedRouteTag);
       this.filterData(busses, selectedRouteTag);
-
     }));
   }
 
@@ -74,7 +76,7 @@ export class MapEngineService {
   }
 
   private filterData(busses: IBusMap, routeTag: string) {
-    const bussesArray = busses.vehicle.reduce((acc: any, cur) => {
+    const bussesArray: GeoJson[] = busses.vehicle.reduce((acc: GeoJson[], cur) => {
       const coordinates = [parseFloat(cur.lon), parseFloat(cur.lat)];
       const newMarker = new GeoJson(coordinates, { message: `Bus# ${cur.id}-(${cur.routeTag})` });
       acc.push(newMarker);
@@ -84,7 +86,7 @@ export class MapEngineService {
       this.createSource(routeTag);
       this.createLayer(routeTag);
     }
-    const source = this.mapRef.getSource(routeTag);
+    const source: any = this.mapRef.getSource(routeTag); // * NOTE: Typings issue so used <any>
     const data = new FeatureCollection(bussesArray);
     source.setData(data);
   }
@@ -98,10 +100,7 @@ export class MapEngineService {
       const refreshRate = timer(1000, 15000);
       refreshRate.subscribe(tick => {
         if (selectedRoutes.length !== 0) {
-          console.log('Running');
           this.refreshData(selectedRoutes);
-        } else {
-          console.log('Nope');
         }
       });
   }
