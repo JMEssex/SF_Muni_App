@@ -7,16 +7,41 @@ import { IBusMap } from '../interfaces/map.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MapEngineService {
+  /**
+   * Property for referenceing instance of `mapboxgl.Map`.
+   * @dev Initial value set to `null` to execute first `engine()` call on `App` load.
+   *
+   * @type {mapboxgl.Map}
+   * @memberof MapEngineService
+   */
   mapRef: mapboxgl.Map = null;
 
+  /**
+   * Creates an instance of MapEngineService.
+   *
+   * @param {MapService} mapService Service used for referencing `mapboxgl` and invoking `NextBus API` request methods.
+   * @memberof MapEngineService
+   */
   constructor(
     private mapService: MapService
   ) { }
 
+  /**
+   * Init engine method for building the `mapboxgl` map.
+   *
+   * @fires buildMap()
+   * @memberof MapEngineService
+   */
   public engine() {
     this.buildMap();
   }
 
+  /**
+   * Private method for building the map and applying attributes, resizing the map on `dataloading` event, as well as adding navigation to top.
+   *
+   * @private
+   * @memberof MapEngineService
+   */
   private buildMap() {
     if (!this.mapRef) {
       this.mapRef = new this.mapService.mapboxRef.Map({
@@ -35,6 +60,15 @@ export class MapEngineService {
     }
   }
 
+  /**
+   * Engine Method for executing map source, map layers, and data filtering from `NextBus API` response.
+   *
+   * @fires createSource()
+   * @fires createLayer()
+   * @fires filterData()
+   * @param {string} selectedRouteTag String parameter representing the selected route tag used to invoke function.
+   * @memberof MapEngineService
+   */
   public layerEngine(selectedRouteTag: string) {
     this.mapService.getBusFeed(selectedRouteTag).subscribe(((busses: IBusMap) => {
       this.createSource(selectedRouteTag);
@@ -43,6 +77,13 @@ export class MapEngineService {
     }));
   }
 
+  /**
+   * Private Method for creating a source on the map object.
+   *
+   * @private
+   * @param {string} routeTag String parameter representing the route tag used to invoke function.
+   * @memberof MapEngineService
+   */
   private createSource(routeTag: string) {
     this.mapRef.addSource(`${routeTag}`, {
       type: 'geojson',
@@ -53,6 +94,13 @@ export class MapEngineService {
     });
   }
 
+  /**
+   * Private Method for creating a Layer on the map object and determining how it will be displayed to the user.
+   *
+   * @private
+   * @param {string} routeTag String parameter representing the route tag used to invoke function.
+   * @memberof MapEngineService
+   */
   private createLayer(routeTag: string) {
     // Add a layer method
     this.mapRef.addLayer({
@@ -75,6 +123,14 @@ export class MapEngineService {
     });
   }
 
+  /**
+   * Private Method for filtering `IBusMap` object, converting the data into a `GeoJson` array, and setting the data on the approperate source id based on the `routeTag`.
+   *
+   * @private
+   * @param {IBusMap} busses Object containing location response object from `NextBus API`.
+   * @param {string} routeTag String parameter representing the route tag used to invoke function.
+   * @memberof MapEngineService
+   */
   private filterData(busses: IBusMap, routeTag: string) {
     const bussesArray: GeoJson[] = busses.vehicle.reduce((acc: GeoJson[], cur) => {
       const coordinates = [parseFloat(cur.lon), parseFloat(cur.lat)];
@@ -91,11 +147,26 @@ export class MapEngineService {
     source.setData(data);
   }
 
+  /**
+   * Engine Method for removing a selected route from the map object.
+   *
+   * @fires mapRef.removeLayer()
+   * @fires mapRef.removeSource()
+   * @param {string} selectedRouteTag String parameter representing the selected route tag used to invoke function.
+   * @memberof MapEngineService
+   */
   public removeSource(selectedRouteTag: string) {
     this.mapRef.removeLayer(selectedRouteTag);
     this.mapRef.removeSource(selectedRouteTag);
   }
 
+  /**
+   * Engine Method for executing the refresh of the bus location data.
+   * @dev `refreshRate` timer is set to 15000ms (15 seconds).
+   *
+   * @param {string[]} selectedRoutes Array parameter representing the selected route's tag as strings used to invoke function.
+   * @memberof MapEngineService
+   */
   public refreshEngine(selectedRoutes: string[]) {
       const refreshRate = timer(1000, 15000);
       refreshRate.subscribe(tick => {
@@ -105,6 +176,14 @@ export class MapEngineService {
       });
   }
 
+  /**
+   * Private Method for subscribing to the `NextBus API` data and invoking `filterData()` to return a new `GeoJson` array.
+   *
+   * @private
+   * @fires filterData()
+   * @param {string[]} selectedRoutes Array parameter representing the selected route's tag as strings used to invoke function.
+   * @memberof MapEngineService
+   */
   private refreshData(selectedRoutes: string[]) {
     selectedRoutes.forEach(routeTag => this.mapService.getBusFeed(routeTag).subscribe((busses: IBusMap) => {
       this.filterData(busses, routeTag);

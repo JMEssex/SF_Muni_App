@@ -1,3 +1,5 @@
+
+/***** BUS MAPPING DATA OBJECTS *****/
 interface IVehicle {
   id: string;
   lon: string;
@@ -24,4 +26,15 @@ export interface IBusMap {
   lastTime: ILastTime;
   copyright: string;
   Error: IError; // NOTE: The key of `Error` has an Uppercase `E`
+}
+
+/***** BUS ROUTE DATA OBJECTS *****/
+export interface IRouteDetail {
+  title: string;
+  tag: string;
+}
+
+export interface IBusRouteList {
+  route: IRouteDetail[];
+  copyright: string;
 }
